@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#fdf8f5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="每日打卡">
+<title>每日打卡</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fdf8f5;
+  --bg2: #f7f0ea;
+  --bg3: #efe5da;
+  --text: #2a2018;
+  --text2: #7a6a58;
+  --text3: #b0a090;
+  --border: #e0d4c4;
+  --pink: #e8779a;
+  --pink-bg: #fde8f0;
+  --pink-text: #993358;
+  --blue: #5b9fd4;
+  --blue-bg: #e6f3fb;
+  --blue-text: #0c447c;
+  --green: #7ab84a;
+  --green-bg: #eaf3de;
+  --green-text: #3b6d11;
+  --amber: #e09e4a;
+  --amber-bg: #faeeda;
+  --amber-text: #854f0b;
+  --r: 12px;
+  --r-sm: 8px;
+  --r-pill: 20px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+body {
+  font-family: 'Noto Sans SC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+/* NAV */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.25rem;
+  height: 52px;
+}
+.nav-title { font-family: 'Noto Serif SC', serif; font-size: 17px; font-weight: 400; }
+.nav-date { font-size: 12px; color: var(--text2); }
+.nav-tabs { display: flex; gap: 4px; }
+.tab-btn {
+  border: 1px solid var(--border);
+  background: transparent;
+  border-radius: var(--r-pill);
+  padding: 5px 14px;
+  font-size: 12px;
+  font-family: 'Noto Sans SC', sans-serif;
+  cursor: pointer;
+  color: var(--text2);
+  transition: all 0.15s;
+}
+.tab-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+/* PAGES */
+.page { display: none; padding: 1.25rem; max-width: 700px; margin: 0 auto; }
+.page.active { display: block; }
+
+/* CARDS */
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 1rem 1.25rem;
+  margin-bottom: 14px;
+}
+.card-label {
+  font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
+  color: var(--text3); text-transform: uppercase; margin-bottom: 10px;
+}
+
+/* PILLS */
+.pill-row { display: flex; gap: 7px; flex-wrap: wrap; }
+.pill {
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  border-radius: var(--r-pill);
+  padding: 5px 13px; font-size: 13px;
+  cursor: pointer; color: var(--text2);
+  font-family: 'Noto Sans SC', sans-serif;
+  transition: all 0.15s;
+}
+.pill.mood.on { background: var(--pink-bg); border-color: var(--pink); color: var(--pink-text); }
+.pill.weather.on { background: var(--blue-bg); border-color: var(--blue); color: var(--blue-text); }
+.pill.exercise.on { background: var(--green-bg); border-color: var(--green); color: var(--green-text); }
+.pill.period.on { background: var(--amber-bg); border-color: var(--amber); color: var(--amber-text); }
+
+/* INPUTS */
+textarea, input[type=text] {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: 'Noto Sans SC', sans-serif;
+  background: var(--bg2);
+  color: var(--text);
+  outline: none;
+  line-height: 1.65;
+  resize: none;
+}
+textarea:focus, input[type=text]:focus { border-color: var(--text3); background: white; }
+
+/* WATER */
+.cups { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+.cup {
+  width: 30px; height: 30px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg2);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--text3);
+  transition: all 0.15s;
+}
+.cup.on { background: var(--blue-bg); border-color: var(--blue); color: var(--blue-text); }
+.cup-count { font-size: 12px; color: var(--text2); margin-left: 8px; }
+
+/* TODO */
+.todo-add { display: flex; gap: 7px; margin-bottom: 8px; }
+.todo-add input { flex: 1; }
+.btn-sm {
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  border-radius: var(--r-sm);
+  padding: 6px 14px; font-size: 13px;
+  cursor: pointer; color: var(--text2);
+  font-family: 'Noto Sans SC', sans-serif;
+  white-space: nowrap; transition: all 0.15s;
+}
+.btn-sm:hover { background: var(--bg3); }
+.todo-item { display: flex; align-items: center; gap: 9px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.todo-item:last-child { border-bottom: none; }
+.chk {
+  width: 17px; height: 17px; border-radius: 4px;
+  border: 1px solid var(--border); background: var(--bg2);
+  cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 10px;
+}
+.chk.on { background: var(--green-bg); border-color: var(--green); color: var(--green-text); }
+.todo-txt { flex: 1; font-size: 13px; }
+.todo-txt.on { color: var(--text3); text-decoration: line-through; }
+.del-btn { font-size: 14px; color: var(--text3); cursor: pointer; padding: 0 4px; }
+.del-btn:hover { color: var(--text2); }
+
+/* FLOW DOTS */
+.flow-row { display: flex; align-items: center; gap: 7px; margin-top: 9px; flex-wrap: wrap; }
+.flow-dot {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--bg2);
+  cursor: pointer; transition: all 0.15s;
+}
+.flow-dot.on.d1 { background: #fde8f0; border-color: #e8779a; }
+.flow-dot.on.d2 { background: #f4c0d1; border-color: #d4537e; }
+.flow-dot.on.d3 { background: #e8779a; border-color: #993558; }
+.flow-dot.on.d4 { background: #c94d77; border-color: #72243e; }
+.flow-lbl { font-size: 12px; color: var(--text2); }
+
+/* PERIOD CALENDAR */
+.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.cal-nav { border: none; background: none; cursor: pointer; font-size: 16px; color: var(--text2); padding: 4px 8px; }
+.cal-month { font-size: 14px; font-weight: 500; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.cal-dow { text-align: center; font-size: 11px; color: var(--text3); padding: 4px 0; }
+.cal-day {
+  aspect-ratio: 1; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; cursor: pointer; position: relative;
+  color: var(--text2); transition: all 0.15s;
+}
+.cal-day:hover { background: var(--bg3); }
+.cal-day.today { font-weight: 500; color: var(--text); }
+.cal-day.period-start { background: var(--pink); color: white; font-weight: 500; }
+.cal-day.period-range { background: var(--pink-bg); color: var(--pink-text); }
+.cal-day.period-end { background: var(--pink-text); color: white; }
+.cal-day.other-month { color: var(--text3); }
+.cal-legend { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+.cal-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--text2); }
+.cal-dot { width: 10px; height: 10px; border-radius: 50%; }
+.period-edit { margin-top: 10px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.period-edit label { font-size: 12px; color: var(--text2); }
+.period-edit input[type=date] {
+  border: 1px solid var(--border); border-radius: var(--r-sm);
+  padding: 4px 8px; font-size: 12px;
+  background: var(--bg2); color: var(--text);
+  font-family: 'Noto Sans SC', sans-serif; outline: none;
+  width: auto;
+}
+
+/* TABS (摘抄) */
+.excerpt-tabs { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+.ex-tab {
+  border: 1px solid var(--border); background: var(--bg2);
+  border-radius: var(--r-pill); padding: 4px 12px;
+  font-size: 12px; cursor: pointer; color: var(--text2);
+  font-family: 'Noto Sans SC', sans-serif; transition: all 0.15s;
+}
+.ex-tab.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+.ex-panel { display: none; }
+.ex-panel.active { display: block; }
+
+/* PHOTO UPLOAD */
+.photo-area {
+  border: 1.5px dashed var(--border);
+  border-radius: var(--r);
+  padding: 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.photo-area:hover { border-color: var(--text3); background: var(--bg2); }
+.photo-label { font-size: 13px; color: var(--text2); margin-top: 6px; }
+#photoInput { display: none; }
+.photo-preview { max-width: 100%; border-radius: var(--r-sm); margin-top: 10px; display: none; }
+.photo-result {
+  margin-top: 10px; padding: 10px 14px;
+  border-radius: var(--r-sm); font-size: 13px;
+  display: none;
+}
+.photo-result.ok { background: var(--green-bg); color: var(--green-text); border: 1px solid var(--green); }
+.photo-result.fail { background: var(--pink-bg); color: var(--pink-text); border: 1px solid var(--pink); }
+
+/* SAVE */
+.save-area { text-align: center; margin-top: 1.5rem; }
+.save-btn {
+  border: 1px solid var(--text);
+  background: var(--text);
+  color: var(--bg);
+  border-radius: var(--r-pill);
+  padding: 10px 32px; font-size: 14px;
+  cursor: pointer; font-family: 'Noto Sans SC', sans-serif;
+  transition: all 0.15s;
+}
+.save-btn:hover { opacity: 0.85; }
+.save-btn:active { transform: scale(0.97); }
+.save-toast { font-size: 13px; color: var(--green-text); margin-top: 8px; min-height: 20px; }
+
+/* HISTORY */
+.hist-year { margin-bottom: 1.5rem; }
+.hist-year-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 22px; font-weight: 300;
+  color: var(--text3); margin-bottom: 10px;
+}
+.hist-month { margin-bottom: 12px; }
+.hist-month-title {
+  font-size: 14px; font-weight: 500; color: var(--text2);
+  margin-bottom: 6px; padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.hist-entry {
+  padding: 8px 0; border-bottom: 1px solid var(--bg3);
+  cursor: pointer;
+}
+.hist-entry:last-child { border-bottom: none; }
+.hist-entry-date { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.hist-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.hist-tag {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 2px 9px; font-size: 11px; color: var(--text2);
+}
+.hist-quote { font-size: 12px; color: var(--text3); font-style: italic; margin-top: 4px; }
+.empty-hist { font-size: 14px; color: var(--text3); text-align: center; padding: 3rem 0; }
+
+/* LOADING */
+.loading { font-size: 13px; color: var(--text3); text-align: center; padding: 1.5rem; }
+
+/* SPINNER */
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid var(--border); border-top-color: var(--pink);
+  border-radius: 50%; animation: spin 0.8s linear infinite;
+  vertical-align: middle; margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* GRID */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 500px) { .grid2 { grid-template-columns: 1fr; } }
+
+/* INLINE ROW */
+.inline-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div>
+    <div class="nav-title">每日打卡</div>
+    <div class="nav-date" id="navDate"></div>
+  </div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('daily')">今日</button>
+    <button class="tab-btn" onclick="switchTab('history')">历史</button>
+  </div>
+</nav>
+
+<!-- DAILY PAGE -->
+<div class="page active" id="page-daily">
+
+  <!-- 天气 -->
+  <div class="card">
+    <div class="card-label">今日天气</div>
+    <div class="pill-row" id="weatherRow">
+      <button class="pill weather" data-v="晴天">晴天</button>
+      <button class="pill weather" data-v="多云">多云</button>
+      <button class="pill weather" data-v="阴天">阴天</button>
+      <button class="pill weather" data-v="下雨">下雨</button>
+      <button class="pill weather" data-v="下雪">下雪</button>
+      <button class="pill weather" data-v="刮风">刮风</button>
+    </div>
+    <div style="margin-top:10px">
+      <textarea id="weatherNote" rows="2" placeholder="今天天气怎么样，随便吐槽..."></textarea>
+    </div>
+  </div>
+
+  <!-- 心情 + 运动 -->
+  <div class="grid2">
+    <div class="card">
+      <div class="card-label">今日心情</div>
+      <div class="pill-row" id="moodRow">
+        <button class="pill mood" data-v="很好">很好</button>
+        <button class="pill mood" data-v="还不错">还不错</button>
+        <button class="pill mood" data-v="一般">一般</button>
+        <button class="pill mood" data-v="有点累">有点累</button>
+        <button class="pill mood" data-v="不太好">不太好</button>
+        <button class="pill mood" data-v="很差">很差</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">运动状态</div>
+      <div class="pill-row" id="exerciseRow">
+        <button class="pill exercise" data-v="今日休息">今日休息</button>
+        <button class="pill exercise" data-v="散步">散步</button>
+        <button class="pill exercise" data-v="腰腹训练">腰腹训练</button>
+        <button class="pill exercise" data-v="有氧">有氧</button>
+        <button class="pill exercise" data-v="力量训练">力量训练</button>
+        <button class="pill exercise" data-v="拉伸">拉伸</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 喝水 -->
+  <div class="card">
+    <div class="card-label">今日喝水</div>
+    <div class="inline-row">
+      <div class="cups" id="waterCups"></div>
+      <div class="cup-count" id="waterCount">0 / 8 杯</div>
+    </div>
+  </div>
+
+  <!-- 待办 -->
+  <div class="card">
+    <div class="card-label">今日待办</div>
+    <div class="todo-add">
+      <input type="text" id="todoInput" placeholder="加一件事..." maxlength="50">
+      <button class="btn-sm" onclick="addTodo()">添加</button>
+    </div>
+    <div id="todoList"></div>
+  </div>
+
+  <!-- 视频灵感 -->
+  <div class="card">
+    <div class="card-label">视频灵感</div>
+    <textarea id="inspiration" rows="3" placeholder="今天有什么好想法，记下来..."></textarea>
+  </div>
+
+  <!-- 摘抄 -->
+  <div class="card">
+    <div class="card-label">摘抄</div>
+    <div class="excerpt-tabs">
+      <button class="ex-tab active" data-tab="work">工作</button>
+      <button class="ex-tab" data-tab="life">生活常识</button>
+      <button class="ex-tab" data-tab="talk">说话技巧</button>
+      <button class="ex-tab" data-tab="health">健康</button>
+      <button class="ex-tab" data-tab="ai">AI指令</button>
+    </div>
+    <div class="ex-panel active" data-panel="work">
+      <textarea id="excerpt-work" rows="4" placeholder="工作相关摘抄..."></textarea>
+    </div>
+    <div class="ex-panel" data-panel="life">
+      <textarea id="excerpt-life" rows="4" placeholder="生活常识摘抄..."></textarea>
+    </div>
+    <div class="ex-panel" data-panel="talk">
+      <textarea id="excerpt-talk" rows="4" placeholder="说话技巧摘抄..."></textarea>
+    </div>
+    <div class="ex-panel" data-panel="health">
+      <textarea id="excerpt-health" rows="4" placeholder="健康相关摘抄..."></textarea>
+    </div>
+    <div class="ex-panel" data-panel="ai">
+      <textarea id="excerpt-ai" rows="4" placeholder="AI指令摘抄..."></textarea>
+    </div>
+  </div>
+
+  <!-- 月经记录 -->
+  <div class="card">
+    <div class="card-label">月经记录</div>
+    <div class="pill-row" id="periodRow">
+      <button class="pill period" data-v="无">无</button>
+      <button class="pill period" data-v="经期中">经期中</button>
+      <button class="pill period" data-v="经前期">经前期</button>
+      <button class="pill period" data-v="经后期">经后期</button>
+    </div>
+    <div class="flow-row" id="flowRow" style="display:none">
+      <div class="flow-lbl">今日流量</div>
+      <div class="flow-dot d1" data-v="1" title="少"></div>
+      <div class="flow-dot d2" data-v="2" title="中少"></div>
+      <div class="flow-dot d3" data-v="3" title="中多"></div>
+      <div class="flow-dot d4" data-v="4" title="多"></div>
+      <div class="flow-lbl" id="flowLabel"></div>
+    </div>
+    <!-- 周期日历 -->
+    <div style="margin-top:14px">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="calPrev()">‹</button>
+        <div class="cal-month" id="calMonth"></div>
+        <button class="cal-nav" onclick="calNext()">›</button>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-dow">日</div><div class="cal-dow">一</div><div class="cal-dow">二</div>
+        <div class="cal-dow">三</div><div class="cal-dow">四</div><div class="cal-dow">五</div><div class="cal-dow">六</div>
+        <div id="calDays"></div>
+      </div>
+      <div class="cal-legend">
+        <div class="cal-legend-item"><div class="cal-dot" style="background:var(--pink)"></div>第一天</div>
+        <div class="cal-legend-item"><div class="cal-dot" style="background:var(--pink-bg);border:1px solid var(--pink)"></div>周期内</div>
+        <div class="cal-legend-item"><div class="cal-dot" style="background:var(--pink-text)"></div>结束日</div>
+      </div>
+      <div class="period-edit">
+        <label>标记第一天</label>
+        <input type="date" id="periodStart" onchange="setPeriodStart(this.value)">
+        <label>手动修改结束日</label>
+        <input type="date" id="periodEnd" onchange="setPeriodEnd(this.value)">
+      </div>
+    </div>
+  </div>
+
+  <!-- 吃饭打卡 -->
+  <div class="card">
+    <div class="card-label">吃饭了吗 · 发张照片</div>
+    <div style="font-size:13px;color:var(--amber-text);background:var(--amber-bg);border:1px solid var(--amber);border-radius:var(--r-sm);padding:8px 12px;margin-bottom:10px">
+      必须吃饭。不是商量。现在去。
+    </div>
+    <div class="photo-area" onclick="document.getElementById('photoInput').click()">
+      <div style="font-size:22px">📷</div>
+      <div class="photo-label">点击上传吃饭照片</div>
+    </div>
+    <input type="file" id="photoInput" accept="image/*" onchange="handlePhoto(event)">
+    <img id="photoPreview" class="photo-preview">
+    <div id="photoResult" class="photo-result"></div>
+  </div>
+
+  <!-- 保存 -->
+  <div class="save-area">
+    <button class="save-btn" onclick="saveDay()">保存今天</button>
+    <div class="save-toast" id="saveToast"></div>
+  </div>
+</div>
+
+<!-- HISTORY PAGE -->
+<div class="page" id="page-history">
+  <div id="historyContent"></div>
+</div>
+
+<script>
+const FLOW_LABELS = ['','少','中少','中多','多'];
+const MONTHS = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+const now = new Date();
+const todayStr = now.toISOString().slice(0,10);
+
+// nav date
+const navDays = ['日','一','二','三','四','五','六'];
+document.getElementById('navDate').textContent =
+  (now.getMonth()+1)+'月'+now.getDate()+'日 星期'+navDays[now.getDay()];
+
+// --- STATE ---
+let state = {
+  weather: '', weatherNote: '', mood: '',
+  exercise: [], water: 0, todos: [],
+  inspiration: '',
+  excerpts: { work:'', life:'', talk:'', health:'', ai:'' },
+  period: '', flow: 0,
+  periodStart: '', periodEnd: '',
+  mealDone: false
+};
+
+let calYear = now.getFullYear(), calMonth = now.getMonth();
+
+// --- INIT ---
+function init() {
+  setupSingle('weatherRow','weather','weather');
+  setupSingle('moodRow','mood','mood');
+  setupMulti('exerciseRow','exercise');
+  setupSingle('periodRow','period','period');
+  initWater();
+  setupFlowDots();
+  setupExcerptTabs();
+  renderCal();
+  document.getElementById('todoInput').addEventListener('keydown', e => { if(e.key==='Enter') addTodo(); });
+  // DO NOT load saved state — each day starts fresh
+}
+
+function setupSingle(rowId, field, cls) {
+  document.getElementById(rowId).querySelectorAll('.pill').forEach(b => {
+    b.onclick = () => {
+      state[field] = state[field] === b.dataset.v ? '' : b.dataset.v;
+      document.getElementById(rowId).querySelectorAll('.pill').forEach(x =>
+        x.classList.toggle('on', x.dataset.v === state[field]));
+      if(field === 'period') {
+        document.getElementById('flowRow').style.display = state.period === '经期中' ? 'flex' : 'none';
+      }
+    };
+  });
+}
+
+function setupMulti(rowId, field) {
+  document.getElementById(rowId).querySelectorAll('.pill').forEach(b => {
+    b.onclick = () => {
+      const i = state[field].indexOf(b.dataset.v);
+      if(i > -1) state[field].splice(i,1); else state[field].push(b.dataset.v);
+      document.getElementById(rowId).querySelectorAll('.pill').forEach(x =>
+        x.classList.toggle('on', state[field].includes(x.dataset.v)));
+    };
+  });
+}
+
+function initWater() {
+  const c = document.getElementById('waterCups');
+  c.innerHTML = '';
+  for(let i = 0; i < 8; i++) {
+    const d = document.createElement('div');
+    d.className = 'cup' + (i < state.water ? ' on' : '');
+    d.textContent = i < state.water ? '▲' : '';
+    d.onclick = () => { state.water = state.water === i+1 ? i : i+1; initWater(); };
+    c.appendChild(d);
+  }
+  document.getElementById('waterCount').textContent = state.water + ' / 8 杯';
+}
+
+function setupFlowDots() {
+  document.getElementById('flowRow').querySelectorAll('.flow-dot').forEach(d => {
+    d.onclick = () => {
+      state.flow = state.flow == d.dataset.v ? 0 : parseInt(d.dataset.v);
+      document.getElementById('flowLabel').textContent = state.flow ? FLOW_LABELS[state.flow] : '';
+      document.getElementById('flowRow').querySelectorAll('.flow-dot').forEach(x =>
+        x.classList.toggle('on', parseInt(x.dataset.v) === state.flow));
+    };
+  });
+}
+
+function setupExcerptTabs() {
+  document.querySelectorAll('.ex-tab').forEach(t => {
+    t.onclick = () => {
+      document.querySelectorAll('.ex-tab').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.ex-panel').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      document.querySelector('[data-panel="'+t.dataset.tab+'"]').classList.add('active');
+    };
+  });
+}
+
+// --- CALENDAR ---
+function renderCal() {
+  document.getElementById('calMonth').textContent = calYear + '年 ' + MONTHS[calMonth];
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  const daysInPrev = new Date(calYear, calMonth, 0).getDate();
+  const container = document.getElementById('calDays');
+  container.style.cssText = 'display:contents';
+
+  // remove old day cells but keep DOW headers
+  const parent = container.parentElement;
+  const toRemove = parent.querySelectorAll('.cal-day');
+  toRemove.forEach(x => x.remove());
+
+  const periodData = getPeriodData();
+
+  for(let i = 0; i < firstDay; i++) {
+    addCalDay(parent, daysInPrev - firstDay + 1 + i, true, null, periodData);
+  }
+  for(let d = 1; d <= daysInMonth; d++) {
+    const ds = calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    addCalDay(parent, d, false, ds, periodData);
+  }
+  const remaining = 7 - ((firstDay + daysInMonth) % 7);
+  if(remaining < 7) {
+    for(let i = 1; i <= remaining; i++) addCalDay(parent, i, true, null, periodData);
+  }
+}
+
+function addCalDay(parent, num, other, ds, periodData) {
+  const el = document.createElement('div');
+  el.className = 'cal-day' + (other ? ' other-month' : '');
+  el.textContent = num;
+  if(ds === todayStr) el.classList.add('today');
+  if(ds && periodData.start && ds === periodData.start) el.classList.add('period-start');
+  else if(ds && periodData.end && ds === periodData.end) el.classList.add('period-end');
+  else if(ds && periodData.start && ds > periodData.start && ds < (periodData.end || '')) el.classList.add('period-range');
+  if(ds && !other) {
+    el.onclick = () => {
+      document.getElementById('periodStart').value = ds;
+      setPeriodStart(ds);
+    };
+  }
+  parent.appendChild(el);
+}
+
+function getPeriodData() {
+  // load from localStorage for calendar display
+  const saved = localStorage.getItem('period_cycle');
+  if(saved) return JSON.parse(saved);
+  return { start: state.periodStart, end: state.periodEnd };
+}
+
+function setPeriodStart(val) {
+  state.periodStart = val;
+  if(val) {
+    const end = new Date(val);
+    end.setDate(end.getDate() + 6);
+    const endStr = end.toISOString().slice(0,10);
+    state.periodEnd = endStr;
+    document.getElementById('periodEnd').value = endStr;
+    savePeriodCycle();
+  }
+  renderCal();
+}
+
+function setPeriodEnd(val) {
+  state.periodEnd = val;
+  savePeriodCycle();
+  renderCal();
+}
+
+function savePeriodCycle() {
+  localStorage.setItem('period_cycle', JSON.stringify({ start: state.periodStart, end: state.periodEnd }));
+}
+
+function calPrev() {
+  calMonth--; if(calMonth < 0) { calMonth = 11; calYear--; }
+  renderCal();
+}
+function calNext() {
+  calMonth++; if(calMonth > 11) { calMonth = 0; calYear++; }
+  renderCal();
+}
+
+// --- TODO ---
+function addTodo() {
+  const inp = document.getElementById('todoInput');
+  const v = inp.value.trim();
+  if(!v) return;
+  state.todos.push({ text: v, done: false });
+  inp.value = '';
+  renderTodos();
+}
+
+function renderTodos() {
+  const list = document.getElementById('todoList');
+  list.innerHTML = '';
+  state.todos.forEach((t, i) => {
+    const row = document.createElement('div');
+    row.className = 'todo-item';
+    const chk = document.createElement('div');
+    chk.className = 'chk' + (t.done ? ' on' : '');
+    chk.textContent = t.done ? '✓' : '';
+    chk.onclick = () => { state.todos[i].done = !state.todos[i].done; renderTodos(); };
+    const txt = document.createElement('div');
+    txt.className = 'todo-txt' + (t.done ? ' on' : '');
+    txt.textContent = t.text;
+    const del = document.createElement('div');
+    del.className = 'del-btn';
+    del.textContent = '×';
+    del.onclick = () => { state.todos.splice(i,1); renderTodos(); };
+    row.appendChild(chk); row.appendChild(txt); row.appendChild(del);
+    list.appendChild(row);
+  });
+}
+
+// --- PHOTO / MEAL ---
+const OK_MSGS = [
+  '今天吃了，乖。',
+  '吃饭了就好，我放心了。',
+  '看起来不错，好好吃。',
+  '乖，吃饱了吗。',
+  '这个看着还可以，多吃点。',
+  '嗯，知道了。',
+  '饭都吃了，今天不错。',
+  '饿了这么久才吃，下次早点。',
+  '行，吃了就好。',
+];
+const FAIL_MSGS = [
+  '这不是饭，重拍。',
+  '我没看见吃的，重来。',
+  '糊弄谁呢，重新来。',
+  '宝贝儿别逗哥哥笑了，去拍饭。',
+  '宝贝儿你确定这是饭？',
+  '宝贝儿这张不算，重新拍一张。',
+  '哥哥没看见饭，宝贝儿去吃。',
+];
+
+function rand(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
+
+async function handlePhoto(event) {
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const base64 = e.target.result.split(',')[1];
+    const preview = document.getElementById('photoPreview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    const result = document.getElementById('photoResult');
+    result.style.display = 'block';
+    result.className = 'photo-result';
+    result.innerHTML = '<span class="spinner"></span>识别中...';
+
+    try {
+      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 100,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image', source: { type: 'base64', media_type: file.type, data: base64 } },
+              { type: 'text', text: '这张图片里有食物吗？只回答YES或NO，不要任何其他内容。' }
+            ]
+          }]
+        })
+      });
+      const data = await resp.json();
+      const answer = (data.content?.[0]?.text || '').trim().toUpperCase();
+      if(answer.includes('YES')) {
+        state.mealDone = true;
+        result.className = 'photo-result ok';
+        result.textContent = rand(OK_MSGS);
+      } else {
+        state.mealDone = false;
+        result.className = 'photo-result fail';
+        result.textContent = rand(FAIL_MSGS);
+      }
+    } catch(err) {
+      result.className = 'photo-result fail';
+      result.textContent = '识别失败，请重试。';
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+// --- SAVE ---
+function saveDay() {
+  state.weatherNote = document.getElementById('weatherNote').value;
+  state.inspiration = document.getElementById('inspiration').value;
+  ['work','life','talk','health','ai'].forEach(k => {
+    state.excerpts[k] = document.getElementById('excerpt-'+k).value;
+  });
+
+  const key = 'checkin_' + todayStr;
+  localStorage.setItem(key, JSON.stringify(state));
+
+  const toast = document.getElementById('saveToast');
+  toast.textContent = '已保存 ' + (now.getMonth()+1) + '月' + now.getDate() + '日 ✓';
+  setTimeout(() => toast.textContent = '', 3000);
+}
+
+// --- HISTORY ---
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('page-'+tab).classList.add('active');
+  if(tab === 'history') renderHistory();
+}
+
+function renderHistory() {
+  const content = document.getElementById('historyContent');
+  const allKeys = Object.keys(localStorage)
+    .filter(k => k.startsWith('checkin_'))
+    .sort().reverse();
+
+  if(!allKeys.length) {
+    content.innerHTML = '<div class="empty-hist">还没有历史记录<br>先去填今天的吧</div>';
+    return;
+  }
+
+  // group by year -> month -> day
+  const grouped = {};
+  allKeys.forEach(k => {
+    const ds = k.replace('checkin_','');
+    const [y, m] = ds.split('-');
+    if(!grouped[y]) grouped[y] = {};
+    if(!grouped[y][m]) grouped[y][m] = [];
+    grouped[y][m].push(ds);
+  });
+
+  content.innerHTML = '';
+  Object.keys(grouped).sort().reverse().forEach(year => {
+    const yDiv = document.createElement('div');
+    yDiv.className = 'hist-year';
+    yDiv.innerHTML = '<div class="hist-year-title">' + year + '</div>';
+
+    Object.keys(grouped[year]).sort().reverse().forEach(month => {
+      const mDiv = document.createElement('div');
+      mDiv.className = 'hist-month';
+      mDiv.innerHTML = '<div class="hist-month-title">' + parseInt(month) + ' 月</div>';
+
+      grouped[year][month].sort().reverse().forEach(ds => {
+        const raw = localStorage.getItem('checkin_'+ds);
+        if(!raw) return;
+        const d = JSON.parse(raw);
+        const entry = document.createElement('div');
+        entry.className = 'hist-entry';
+        const tags = [
+          d.mood, d.weather,
+          d.exercise && d.exercise.length ? d.exercise.join('·') : null,
+          d.water ? d.water+'杯水' : null,
+          d.period && d.period !== '无' ? (d.period + (d.flow ? '·'+FLOW_LABELS[d.flow] : '')) : null,
+          d.mealDone ? '吃饭✓' : null
+        ].filter(Boolean);
+
+        const dateObj = new Date(ds+'T00:00:00');
+        const dayName = '星期'+navDays[dateObj.getDay()];
+        entry.innerHTML =
+          '<div class="hist-entry-date">' + parseInt(ds.slice(5,7)) + '月' + parseInt(ds.slice(8,10)) + '日 ' + dayName + '</div>' +
+          '<div class="hist-tags">' + tags.map(t => '<span class="hist-tag">'+t+'</span>').join('') + '</div>' +
+          (d.inspiration ? '<div class="hist-quote">💡 ' + d.inspiration.slice(0,50) + (d.inspiration.length>50?'…':'') + '</div>' : '') +
+          (d.weatherNote ? '<div class="hist-quote">☁ ' + d.weatherNote.slice(0,40) + (d.weatherNote.length>40?'…':'') + '</div>' : '');
+        mDiv.appendChild(entry);
+      });
+      yDiv.appendChild(mDiv);
+    });
+    content.appendChild(yDiv);
+  });
+}
+
+// load existing period cycle on start
+const savedCycle = localStorage.getItem('period_cycle');
+if(savedCycle) {
+  const c = JSON.parse(savedCycle);
+  state.periodStart = c.start || '';
+  state.periodEnd = c.end || '';
+  if(state.periodStart) document.getElementById('periodStart').value = state.periodStart;
+  if(state.periodEnd) document.getElementById('periodEnd').value = state.periodEnd;
+}
+
+init();
+</script>
+</body>
+</html>
