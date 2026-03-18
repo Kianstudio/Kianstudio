@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <rect width="120" height="120" rx="26" fill="white"/>
+  <path d="M18 72 Q16 42 60 38 Q104 42 102 72 Q102 100 60 104 Q18 100 18 72Z" fill="none" stroke="#b0b0b0" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M28 50 Q24 28 40 33 Q36 46 28 50Z" fill="none" stroke="#b0b0b0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M92 50 Q96 28 80 33 Q84 46 92 50Z" fill="none" stroke="#b0b0b0" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M44 66 Q47 63 50 66" fill="none" stroke="#b0b0b0" stroke-width="3" stroke-linecap="round"/>
+  <path d="M70 66 Q73 63 76 66" fill="none" stroke="#b0b0b0" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="60" cy="76" r="2.5" fill="#c0c0c0"/>
+  <path d="M56 80 Q60 84 64 80" fill="none" stroke="#c0c0c0" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="70" x2="48" y2="74" stroke="#d0d0d0" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="78" x2="48" y2="78" stroke="#d0d0d0" stroke-width="2" stroke-linecap="round"/>
+  <line x1="104" y1="70" x2="72" y2="74" stroke="#d0d0d0" stroke-width="2" stroke-linecap="round"/>
+  <line x1="104" y1="78" x2="72" y2="78" stroke="#d0d0d0" stroke-width="2" stroke-linecap="round"/>
+  <path d="M30 92 Q38 98 46 94" fill="none" stroke="#b0b0b0" stroke-width="3" stroke-linecap="round"/>
+  <path d="M90 92 Q82 98 74 94" fill="none" stroke="#b0b0b0" stroke-width="3" stroke-linecap="round"/>
+  <g transform="translate(60,96)">
+    <line x1="0" y1="-4" x2="0" y2="-16" stroke="#e8779a" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="0" cy="-18" r="3.5" fill="#e8779a"/>
+    <line x1="3" y1="-3" x2="12" y2="-12" stroke="#f97b6b" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="14" cy="-14" r="3.5" fill="#f97b6b"/>
+    <line x1="4" y1="0" x2="16" y2="0" stroke="#f4a94e" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="18" cy="0" r="3.5" fill="#f4a94e"/>
+    <line x1="3" y1="3" x2="10" y2="10" stroke="#f9d46a" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="12" cy="12" r="3.5" fill="#f9d46a"/>
+    <line x1="0" y1="4" x2="0" y2="16" stroke="#7ab84a" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="0" cy="18" r="3.5" fill="#7ab84a"/>
+    <line x1="-3" y1="3" x2="-10" y2="10" stroke="#5bafd4" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="-12" cy="12" r="3.5" fill="#5bafd4"/>
+    <line x1="-4" y1="0" x2="-16" y2="0" stroke="#a07ee0" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="-18" cy="0" r="3.5" fill="#a07ee0"/>
+    <line x1="-3" y1="-3" x2="-12" y2="-12" stroke="#5bcfcf" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="-14" cy="-14" r="3.5" fill="#5bcfcf"/>
+    <circle cx="0" cy="0" r="4" fill="#e8779a"/>
+  </g>
+</svg>
